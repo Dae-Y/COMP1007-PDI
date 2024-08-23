@@ -1,0 +1,307 @@
+// FILE:    Project.txt
+// AUTHOR:  Daehwan Yeo 19448288
+// PURPOSE: It is one of the model classes.
+//          Aggregation relationship with Location class.
+// REFERENCE: None.
+// COMMENTS: String values such as province and stage can 
+//           be validated, but the rest are too broad, so 
+//           I just check for nulls.
+//
+// Last Modified: 17th / 5 / 2023
+
+CLASS Project
+  CLASS FIELDS:
+    province(String)
+    beneficiary(String)
+    beneficiaryNum(int)
+    assetClass(String)
+    name(String)
+    stage(String)
+    location(Location object)
+
+  CONSTRUCTOR with PARAMETERS
+    IMPORT: pProv(String), pBenef(String), pBenefNum(int),
+            pAsset(String), pName(String), pStage(String),
+            pLat(double), pLong(double), pCoordSys(String)
+    EXPORT: none Constructors never export
+    ASSERTION: Created object with imported values
+    ALGORITHM:
+      province = pProv
+      beneficiary = pBenef
+      beneficiaryNum = pBenefNum
+      assetClass = pAsset
+      name = pName
+      stage = pStage
+      location = NEW Location <- pLat, pLong, pCoordSys
+  END CONSTRUCTOR with PARAMETERS
+
+  COPY CONSTRUCTOR
+    IMPORT: pProject (Project)
+    EXPORT: none Constructors never export
+    ASSERTION: Created a Copy of the IMPORTed object
+    ALGORITHM:
+      province = pProject.getProvince <- none
+      beneficiary = pProject.getBeneficiary <- none
+      beneficiaryNum = pProject.getBeneficiaryNum <- none
+      assetClass = pProject.getAssetClass <- none
+      name = pProject.getName <- none
+      stage = pProject.getStage <- none
+      location = NEW Location(pProject.location.getLatitude(), pProject.location.getLongitude(), pProject.location.getCoordinateSystem())
+  END COPY CONSTRUCTOR
+   
+  DEFAULT CONSTRUCTOR
+    IMPORT: none Default constructors do not import
+    EXPORT: none Constructors never export
+    ASSERTION: Creates an object with the default values
+    ALGORITHM:
+      province = Quebec
+      beneficiary = First Nations of Quebec and Labrador Sustainable Development Institute
+      beneficiaryNum = 9999
+      assetClass = Energy sustainability and connectivity
+      name = Comprehensive Community Planning
+      stage = Completed
+      location = NEW Location() <- none
+  END DEFAULT CONSTRUCTOR
+
+  MUTATOR: setProvince
+  IMPORT: pProv(String)
+  EXPORT: none
+  ASSERTION: State of province is updated to pProv value
+  ALGORITHM:
+    province = validateProvince <- pProv
+  END setProvince
+
+  MUTATOR: setBeneficiary
+  IMPORT: pBenef(String)
+  EXPORT: none
+  ASSERTION: State of beneficiary is updated to pBenef value
+  ALGORITHM:
+    info = "community"
+    beneficiary = validateString <- pBenef, info
+  END setBeneficiary
+
+  MUTATOR: setBeneficiaryNum
+  IMPORT: pBenefNum(int)
+  EXPORT: none
+  ASSERTION: State of beneficiaryNum is updated to pBenefNum value
+  ALGORITHM:
+    beneficiaryNum = validateBeneficiaryNum <- pBenefNum
+  END setBeneficiaryNum
+
+  MUTATOR: setAssetClass
+  IMPORT: pAsset(String)
+  EXPORT: none
+  ASSERTION: State of assetClass is updated to pAsset value
+  ALGORITHM:
+    info = "infrastructure category"
+    assetClass = validateString <- pAsset, info
+  END setAssetClass
+
+  MUTATOR: setName
+  IMPORT: pName(String)
+  EXPORT: none
+  ASSERTION: State of name is updated to pName value
+  ALGORITHM:
+    info = "project name"
+    name = validateString <- pName, info
+  END setName
+
+  MUTATOR: setStage
+  IMPORT: pStage(String)
+  EXPORT: none
+  ASSERTION: State of stage is updated to pStage value
+  ALGORITHM:
+    stage = validateStage <- pStage
+  END setStage
+
+  MUTATOR: setLocation
+  IMPORT: pLocation(Location object)
+  EXPORT: none
+  ASSERTION: State of location is updated to pLocation value
+  ALGORITHM:
+    location = pLocation
+  END setLocation
+
+  ACCESSOR: getProvince
+  IMPORT: none
+  EXPORT: province(String)
+  ASSERTION: returns the province
+  ALGORITHM:
+    RETURN COPY OF province
+  END getProvince
+
+  ACCESSOR: getBeneficiary
+  IMPORT: none
+  EXPORT: beneficiary(String)
+  ASSERTION: returns the beneficiary
+  ALGORITHM:
+    RETURN COPY OF beneficiary
+  END getBeneficiary
+
+  ACCESSOR: getBeneficiaryNum
+  IMPORT: none
+  EXPORT: beneficiaryNum(int)
+  ASSERTION: returns the beneficiaryNum
+  ALGORITHM:
+    RETURN COPY OF beneficiaryNum
+  END getBeneficiaryNum
+
+  ACCESSOR: getAssetClass
+  IMPORT: none
+  EXPORT: assetClass(String)
+  ASSERTION: returns the assetClass
+  ALGORITHM:
+    RETURN COPY OF assetClass
+  END getAssetClass
+
+  ACCESSOR: getName
+  IMPORT: none
+  EXPORT: name(String)
+  ASSERTION: returns the name
+  ALGORITHM:
+    RETURN COPY OF name
+  END getName
+
+  ACCESSOR: getStage
+  IMPORT: none
+  EXPORT: stage(String)
+  ASSERTION: returns the stage
+  ALGORITHM:
+    RETURN COPY OF stage
+  END getStage
+
+  ACCESSOR: getLocation
+  IMPORT: none
+  EXPORT: location(Location object)
+  ASSERTION: returns the location
+  ALGORITHM:
+    RETURN COPY OF location
+  END getLocation
+
+  METHOD: toString
+  IMPORT: none
+  EXPORT: projectString(String)
+  ASSERTION: returns a String representation of the object
+  ALGORITHM:
+    projectString = "Province/Territory: " + province + " Community: " + beneficiary + " Community Number: " + beneficiaryNum + " Infrastructure Category: " + assetClass + " Project Name: " + name + " Project Status: " + stage + " " + location.toString <- none
+  END toString
+
+  METHOD: equals
+  IMPORT: inObject(Object)
+  EXPORT: isEqual(boolean)
+  ASSERTION: returns true if the two objects are equivalent
+  ALGORITHM:
+    isEqual = FALSE
+    IF inObject IS A Project THEN
+      TRANSFORM inObject TO Project NAMED inProject
+      IF province EQUALS inProject.getProvince() THEN
+        IF beneficiary EQUALS inProject.getBeneficiary() THEN
+          IF beneficiaryNum EQUALS inProject.getBeneficiaryNum() THEN
+            IF assetClass EQUALS inProject.getAssetClass() THEN
+              IF name EQUALS inProject.getName() THEN
+                IF stage EQUALS inProject.getStage() THEN
+                  IF location EQUALS inProject.getLocation THEN
+                    isEqual = TRUE
+  END equals
+
+  METHOD: validateProvince
+  IMPORT: pProv(String)
+  EXPORT: province(String)
+  ASSERTION: province must be one of these: Alberta, British Columbia, 
+             Manitoba, New Brunswick, Newfoundland And Labrador, Nova Scotia, 
+             Ontario, Prince Edward Island, Quebec, Saskatchewan, Northwest Territories, Nunavut, Yukon
+  ALGORITHM:
+    province = "none"
+    provArr = "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
+              "Newfoundland And Labrador", "Nova Scotia", "Ontario", "Prince Edward Island", 
+              "Quebec", "Saskatchewan", "Northwest Territories", "Nunavut", "Yukon"
+    provNum = LENGTH OF provArr
+    isValid = FALSE          
+    TRY
+      IF pProv EQUALS NULL
+        THROW NULL POINTER EXCEPTION <- "ERROR: province is empty."
+      END IF
+
+      FOR i = 0 TO provNum CHANGEBY 1
+        IF pProv EQUALS provArr[i]
+          isValid = TRUE
+        END IF
+      END FOR
+      IF isValid EQUALS FALSE
+        THROW ILLEGAL ARGUMENT EXCEPTION <- "ERROR: province/territory does not belong to Canada."
+      END IF
+      province = pProv
+    END TRY
+    CATCH ILLEGAL ARGUMENT EXCEPTION
+      OUTPUT e.getMessage <- none
+    CATCH NULL POINTER EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateProvince
+
+  METHOD: validateBeneficiaryNum
+  IMPORT: pBenefNum(int)
+  EXPORT: beneficiaryNum(int)
+  ASSERTION: beneficiaryNum sits 1 - 9999 range
+  ALGORITHM:
+    beneficiaryNum = 0
+    TRY
+      IF pBenefNum < 1 AND pBenefNum > 9999
+        THROW ILLEGAL ARGUMENT EXCEPTION <- "ERROR: beneficiary number is invalid."
+      END IF
+      beneficiaryNum = pBenefNum
+    END TRY
+    CATCH ILLEGAL ARGUMENT EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateLatitude
+
+  METHOD: validateStage
+  IMPORT: pStage(String)
+  EXPORT: stage(String)
+  ASSERTION: stage is "Completed" or "Ongoing" 
+  ALGORITHM:
+    stage = "none"
+    stageArr = "Completed", "Ongoing"
+    stageNum = LENGTH OF stageArr
+    isValid = FALSE          
+    TRY
+      IF pStage EQUALS NULL
+        THROW NULL POINTER EXCEPTION <- "ERROR: stage is empty."
+      END IF
+
+      FOR i = 0 TO stageNum CHANGEBY 1
+        IF pStage EQUALS stageArr[i]
+          isValid = TRUE
+        END IF
+      END FOR
+      IF isValid EQUALS FALSE
+        THROW ILLEGAL ARGUMENT EXCEPTION <- "ERROR: stage must be 'Completed' or 'Ongoing'."
+      END IF
+      stage = pStage
+    END TRY
+    CATCH ILLEGAL ARGUMENT EXCEPTION
+      OUTPUT e.getMessage <- none
+    CATCH NULL POINTER EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateStage
+
+  METHOD: validateString
+  IMPORT: pString(String), info(String)
+  EXPORT: str(String)
+  ASSERTION: str is not null, info is extra information for error message
+  ALGORITHM:
+    str = "none"
+    TRY
+      IF pString EQUALS NULL
+        THROW NULL POINTER EXCEPTION <- "ERROR: " + info + " is empty."
+      END IF
+      str = pString
+    END TRY
+    CATCH NULL POINTER EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateString
+
+END CLASS

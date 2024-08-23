@@ -1,0 +1,169 @@
+// FILE:    Location.txt
+// AUTHOR:  Daehwan Yeo 19448288
+// PURPOSE: It is one of the model classes.
+//          Aggregation relationship with Project class.
+// REFERENCE: None.
+// COMMENTS: According to the decimal degrees system, the fifth decimal place is worth up to 1.1 m.
+//           Therefore, Math.abs( ) < 0.00001 is used to compare latitudes and longitudes.
+//           For the coordinate system of Canada, latitudes range from about 42 - 83N, and
+//           longitudes range from about 53 - 141W. These values are used to validating methods.
+// Last Modified: 21st / 5 / 2023
+
+CLASS Location
+  CLASS FIELDS:
+    latitude(double)
+    longitude(double)
+    coordinateSystem(String)
+
+  CONSTRUCTOR with PARAMETERS
+    IMPORT: pLat(double), pLong(double), pCoordSys(String)
+    EXPORT: none Constructors never export
+    ASSERTION: Created object with imported values
+    ALGORITHM:
+      latitude = pLat
+      longitude = pLong
+      coordinateSystem = pCoordSys
+  END CONSTRUCTOR with PARAMETERS
+
+  COPY CONSTRUCTOR
+    IMPORT: pLocation(Location)
+    EXPORT: none Constructors never export
+    ASSERTION: Created a Copy of the IMPORTed object
+    ALGORITHM:
+      latitude = pLocation.getLatitude <- none
+      longitude = pLocation.getLongitude <- none
+      coordinateSystem = pLocation.getCoordinateSystem <- none
+  END COPY CONSTRUCTOR
+   
+  DEFAULT CONSTRUCTOR
+    IMPORT: none Default constructors do not import
+    EXPORT: none Constructors never export
+    ASSERTION: Creates an object with the default values
+    ALGORITHM:
+      latitude = 46.81228
+      longitude = -71.21454
+      coordinateSystem = GCS_North_American_1983_CSRS
+  END DEFAULT CONSTRUCTOR
+
+  MUTATOR: setLatitude
+  IMPORT: pLat(double)
+  EXPORT: none
+  ASSERTION: State of latitude is updated to pLat value
+  ALGORITHM:
+    latitude = validateLatitude <- pLat
+  END setLatitude
+
+  MUTATOR: setLongitude
+  IMPORT: pLong(double)
+  EXPORT: none
+  ASSERTION: State of longitude is updated to pLong value
+  ALGORITHM:
+    longitude = validateLongitude <- pLong
+  END setLongitude
+
+  MUTATOR: setCoordinateSystem
+  IMPORT: pCoordSys(String)
+  EXPORT: none
+  ASSERTION: State of coordinateSystem is updated to pCoordSys value
+  ALGORITHM:
+    coordinateSystem = validateCoordniateSystem <- pCoordSys
+  END setCoordinateSystem
+
+  ACCESSOR: getLatitude
+  IMPORT: none
+  EXPORT: latitude(double)
+  ASSERTION: returns the latitude
+  ALGORITHM:
+    RETURN COPY OF latitude
+  END getLatitude
+
+  ACCESSOR: getLongitude
+  IMPORT: none
+  EXPORT: longitude(double)
+  ASSERTION: returns the longitude
+  ALGORITHM:
+    RETURN COPY OF longitude
+  END getLongitude
+  
+  ACCESSOR: getCoordinateSystem
+  IMPORT: none
+  EXPORT: coordinateSystem(String)
+  ASSERTION: returns the coordinateSystem
+  ALGORITHM:
+    RETURN COPY OF coordinateSystem
+  END getCoordinateSystem
+
+  METHOD: toString
+  IMPORT: none
+  EXPORT: locationString(String)
+  ASSERTION: returns a String representation of the object
+  ALGORITHM:
+    locationString = "Latitude: " + latitude + " Longitude: " + longitude + " Coordinate System: " + coordinateSystem
+  END toString
+
+  METHOD: equals
+  IMPORT: inObject(Object)
+  EXPORT: isEqual(boolean)
+  ASSERTION: returns true if the two objects are equivalent
+  ALGORITHM:
+    isEqual = FALSE
+    IF inObject IS A Location THEN
+      TRANSFORM inObject TO Location NAMED inLocation
+      IF latitude EQUALS inLocation.getLatitude() THEN
+        IF longitude EQUALS inLocation.getLongitude() THEN
+          IF coordinateSystem EQUALS inLocation.getCoordinateSystem() THEN
+            isEqual = TRUE
+  END equals
+
+  METHOD: validateLatitude
+  IMPORT: pLat(double)
+  EXPORT: latitude(double)
+  ASSERTION: latitude sits 42 - 83N range
+  ALGORITHM:
+    latitude = 42.0
+    TRY
+      IF pLat < 42.0 OR pLat > 83.0
+        THROW ILLEGAL ARGUMENT EXCEPTION <- "ERROR: latitude is outside of Canada."
+      END IF
+      latitude = pLat
+    END TRY
+    CATCH ILLEGAL ARGUMENT EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateLatitude
+
+  METHOD: validateLongitude
+  IMPORT: pLong(double)
+  EXPORT: longitude(double)
+  ASSERTION: longitude sits 53 - 141W range
+  ALGORITHM:
+    longitude = -53.0
+    TRY
+      IF pLong < -141.0 OR pLong > -53.0
+        THROW ILLEGAL ARGUMENT EXCEPTION <- "ERROR: longitude is outside of Canada."
+      END IF
+      longitude = pLong
+    END TRY
+    CATCH ILLEGAL ARGUMENT EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateLongitude
+
+  METHOD: validateCoordniateSystem
+  IMPORT: pCoordSys(String)
+  EXPORT: coordinateSystem(String)
+  ASSERTION: coordinateSystem is not null
+  ALGORITHM:
+    coordinateSystem = "GCS_North_American_1983_CSRS"
+    TRY
+      IF pCoordSys EQUALS NULL
+        THROW NULL POINTER EXCEPTION <- "ERROR: coordinate system is empty."
+      END IF
+      coordinateSystem = pCoordSys
+    END TRY
+    CATCH NULL POINTER EXCEPTION
+      OUTPUT e.getMessage <- none
+    END CATCH
+  END validateCoordniateSystem
+
+END CLASS

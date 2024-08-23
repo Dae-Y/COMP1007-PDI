@@ -1,0 +1,443 @@
+// FILE:    Canada.txt
+// AUTHOR:  Daehwan Yeo 19448288
+// PURPOSE: It contains the main and utilises two model classes
+//          Location and Project.
+// REFERENCE: None. It does rely on the lectures and my lab codings.
+// COMMENTS: Easy read and understand in main, shows the flow of the Program
+//           first read the file to get valid csv row, then Project array is made.
+//           With the array, calculates and shows statistics to users. 
+//
+// Last Modified: 21st / 5 / 2023
+
+BEGIN Canada
+  MAIN:
+    rowCount = readFile <- none
+
+    IF(rowCount EQUALS 0)
+      OUTPUT "ERROR: file has no valid csv row."
+    ELSE
+      projectArr NEW Project object array SIZEOF rowCount
+      readFile <- projectArr
+      userInterface <- projectArr, rowCount
+    END IF
+  END MAIN
+
+  METHOD: userInterface
+  IMPORT: projectArr(Project array), rowCount(int)
+  EXPORT: none
+  ASSERTION: interacts with users and loops the menu
+  ALGORITHM:
+    exit = FALSE
+    goMainMenu = FALSE
+    prompt1 = "Please make a choice from the Menu."
+    prompt2 = "Please make a choice from the statistics."
+
+    printString <- "Welcome to the Investments in Indigenous community infrastructure Program."
+    printString <- "There are a total of " + rowCount + " projects throughout Canada."
+
+    choice = 0
+    statChoice = 0
+    WHILE exit NOT EQUALS TRUE
+      printMenu <- none
+      choice = validateIntInput <- prompt1, 1, 15
+      CASE choice
+        case 1:
+          calcAllCanada <- projectArr, rowCount
+        case 2: - case 14:
+          printSubMenu <- none
+          WHILE goMainMenu NOT EQUALS TRUE
+            statChoice = validateIntInput(prompt2, 1, 6)
+            calcProvince <- projectArr, rowCount, choice, statChoice       
+            IF(statChoice EQUALS 6)
+              goMainMenu = TRUE
+            END IF
+        case 15:
+          exit = TRUE
+      END CASE
+    END WHILE  
+    printString <- "Program exited. Please save your logfile.txt"
+  END userInterface
+
+  METHOD: calcAllCanada
+  IMPORT: projectArr(Project array), rowCount(int)
+  EXPORT: none
+  ASSERTION: calculates statistics for all of Canada menu
+  ALGORITHM:
+    df = NEW DECIMALFORMAT #.##
+    ongoing = 0
+    completed = 0
+
+    FOR i = 0 TO rowCount CHANGEBY 1
+      IF projectArr[i].getStage <- none EQUALS "Ongoing"
+        ongoing INCREASE BY 1
+      END IF
+    END FOR
+    completed = rowCount - ongoing
+
+    percentage = (TYPECAST double completed / rowCount) * 100
+    
+    str1 = "The total number of projects in Canada: " + rowCount
+    printString <- str1
+
+    str2 = "The total number of ongoing projects: " + ongoing
+    printString <- str2
+
+    str3 = "The total number of completed projects: " + completed
+    printString <- str3
+
+    str4 = "The percentage of completed projects: " + formatNum + "%"
+    printString <- str4
+  END calcAllCanada
+
+  METHOD: calcProvince
+  IMPORT: projectArr(Project array), rowCount(int), choice(int), statChoice(int)
+  EXPORT: none
+  ASSERTION: calculates statistics for province menu
+  ALGORITHM:
+    df = NEW DECIMALFORMAT #.##
+    provArr ="none", "none", "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland And Labrador", "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Northwest Territories", "Nunavut", "Yukon"
+    numProj = 0
+    ongoing = 0
+    completed = 0
+
+    FOR i = 0 TO rowCount CHANGEBY 1
+      IF projectArr[i].getProvince <- none EQUALS provArr[choice]
+        numProj INCREASE BY 1
+        IF projectArr[i].getStage <- none EQUALS "Ongoing"
+          ongoing INCREASE BY 1
+        END IF
+      END IF
+    END FOR
+    completed = numProj - ongoing
+
+    CASE statChoice
+      case 1:
+        str1 = "There are " + numProj + " projects in " + provArr[choice] + "."
+        printString <- str1
+      case 2:
+        percentage = (TYPECAST double numProj / rowCount) * 100
+        formatNum = df.format <- percentage
+        str2 = "Percentage of " + provArr[choice] + " over all projects in Canada: " + formatNum + "%"
+        printString <- str2
+      case 3:
+        percentage = (TYPECAST double ongoing / numProj) * 100
+        formatNum = df.format <- percentage
+        str3 = "Total number of ongoing projects and percentage : " + ongoing + ", " + formatNum + "%"
+        printString <- str3
+      case 4:
+        percentage = (TYPECAST double completed / numProj) * 100
+        formatNum = df.format <- percentage
+        str4 = "Total number of completed projects and percentage : " + completed + ", " + formatNum + "%"
+        printString <- str4
+      case 5:
+        str1 = "There are " + numProj + " projects in " + provArr[choice] + "."
+        printString <- str1
+
+        percentage = (TYPECAST double numProj / rowCount) * 100
+        formatNum = df.format <- percentage
+        str2 = "Percentage of " + provArr[choice] + " over all projects in Canada: " + formatNum + "%"
+        printString <- str2
+
+        percentage = (TYPECAST double ongoing / numProj) * 100
+        formatNum = df.format <- percentage
+        str3 = "Total number of ongoing projects and percentage : " + ongoing + ", " + formatNum + "%"
+        printString <- str3
+
+        percentage = (TYPECAST double completed / numProj) * 100
+        formatNum = df.format <- percentage
+        str4 = "Total number of completed projects and percentage : " + completed + ", " + formatNum + "%"
+        printString <- str4
+      case 6:
+    END CASE   
+  END calcProvince 
+  
+  METHOD: printMainMenu
+  IMPORT: none
+  EXPORT: none
+  ASSERTION: none
+  ALGORITHM:
+    OUTPUT ">  1. All of Canada"
+    OUTPUT ">  2. Alberta"
+    OUTPUT ">  3. British Columbia"
+    OUTPUT ">  4. Manitoba"
+    OUTPUT ">  5. New Brunswick"
+    OUTPUT ">  6. Newfoundland and Labrador"
+    OUTPUT ">  7. Nova Scotia"
+    OUTPUT ">  8. Ontario"
+    OUTPUT ">  9. Prince Edward Island"
+    OUTPUT "> 10. Quebec");
+    OUTPUT "> 11. Saskatchewan"
+    OUTPUT "> 12. Northwest Territories"
+    OUTPUT "> 13. Nunavut"
+    OUTPUT "> 14. Yukon"
+    OUTPUT "> 15. Exit Program"
+  END printMainMenu  
+  
+  METHOD: printSubMenu
+  IMPORT: none
+  EXPORT: none
+  ASSERTION: none
+  ALGORITHM:
+    OUTPUT ">  1. Number of projects"
+    OUTPUT ">  2. Percentage of all projects located in this province/territory"
+    OUTPUT ">  3. Total number and percentage of Ongoing projects"
+    OUTPUT ">  4. Total number and percentage of Completed projects"
+    OUTPUT ">  5. All of the above statistics"
+    OUTPUT ">  6. Return to main menu"
+  END printSubMenu  
+  
+  METHOD: printString
+  IMPORT: message(String)
+  EXPORT: none
+  ASSERTION: print out message to the screen, and to the logfile.txt
+  ALGORITHM:
+    FILEOUTPUTSTREAM fileStrm = null
+    PrintWriter pw
+    OUTPUT message
+
+    TRY
+      fileStrm = NEW FILEOUTPUTSTREAM <- "logfile.txt", true
+      pw = NEW PrintWriter <- fileStrm
+      pw.close <- none
+    END TRY
+    CATCH IOEXCEPTION
+      OUTPUT "ERROR: failed in writing to file. " + e.getMessage <- none
+    END CATCH
+  END printString  
+  
+  METHOD: readFile
+  IMPORT: projectArr(Project array)
+  EXPORT: none
+  ASSERTION: read file to store data into the Project array
+  ALGORITHM:
+    fileName = "First_Nation_Infrastructure_Investment.csv"
+
+    FileInputStream fileStream = null
+    InputStreamReader isr
+    BufferedReader bufRdr
+    isValid = false
+    rowCount = 0
+
+    TRY
+      fileStream = NEW FileInputStream <- fileName
+      isr = NEW InputStreamReader <- fileStream
+      bufRdr = NEW BufferedReader <- isr
+      lineNum = 1
+      line = bufRdr.readLine <- none // First row is header
+      line = bufRdr.readLine <- none 
+
+      WHILE line NOT EQUALS NULL
+        lineNum INCREASE BY 1
+        isValid = validateLine <- line
+        IF (isValid EQUALS TRUE)
+          processLine <- projectArr, line, rowCount
+          rowCount INCREASE BY 1
+          line.bufRdr.readLine <- none        
+        END IF
+      END WHILE
+      fileStream.close <- none 
+    END TRY
+    CATCH IOEXCEPTION
+      IF fileStream NOT EQUALS NULL
+        TRY
+          fileStream.close <- none
+        END TRY
+        CATCH IOEXCEPTION
+        END CATCH
+      END IF
+      OUTPUT "ERROR: " + e.getMessage <- none
+    END CATCH
+  END readFile 
+  
+  METHOD: processLine
+  IMPORT: projectArr(Project array), line(String), rowCount(int)
+  EXPORT: none
+  ASSERTION: process csv line, store each row data into Project array element
+  ALGORITHM:
+    splitLine = line.split <- ","
+
+    prov = splitLine[0]
+    benef = splitLine[1]
+    bNum = Integer.parseInt <- splitLine[2]
+    asset = splitLine[3]
+    name = splitLine[4]
+    stage = splitLine[6]
+    lati = Double.parseDouble <- splitLine[7]
+    longi = Double.parseDouble <- splitLine[8]
+    coSys = splitLine[9]
+
+    projectArr[rowCount] = new Project(prov, benef, bNum, asset, name, stage, lati, longi, coSys)
+  END processLine
+  
+  METHOD: readFile
+  IMPORT: none
+  EXPORT: rowCount(int)
+  ASSERTION: reads csv file and returns valid csv row count number 
+  ALGORITHM:
+    fileName = "First_Nation_Infrastructure_Investment.csv"
+
+    FileInputStream fileStream = null
+    InputStreamReader isr
+    BufferedReader bufRdr
+    isValid = false
+    rowCount = 0
+
+    TRY
+      fileStream = NEW FileInputStream <- fileName
+      isr = NEW InputStreamReader <- fileStream
+      bufRdr = NEW BufferedReader <- isr
+      lineNum = 1
+      line = bufRdr.readLine <- none // First row is header
+      line = bufRdr.readLine <- none 
+
+      WHILE line NOT EQUALS NULL
+        lineNum INCREASE BY 1
+        isValid = validateLine <- line
+        IF (isValid EQUALS TRUE)
+          rowCount INCREASE BY 1
+          line.bufRdr.readLine <- none   
+        ELSE
+          OUTPUT "ERROR: invalid row data, discarding line " + lineNum + " in csv file." 
+          line.bufRdr.readLine <- none 
+        END IF
+      END WHILE
+      fileStream.close <- none 
+    END TRY
+    CATCH FILENOTFOUNDEXCEPTION
+      OUTPUT "ERROR: could not find the csv file."
+    CATCH IOEXCEPTION
+      IF fileStream NOT EQUALS NULL
+        TRY
+          fileStream.close <- none
+        END TRY
+        CATCH IOEXCEPTION
+        END CATCH
+      END IF
+      OUTPUT "ERROR: " + e.getMessage <- none
+    END CATCH
+  END readFile
+  
+  METHOD: validateLine
+  IMPORT: line(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: returns true if the csv line is valid
+  ALGORITHM:
+    splitLine = line.split <- ","
+    lineLength = LENGTH OF splitLine
+    isValid = FALSE
+
+    IF lineLength EQUALS 10
+      IF validateProvince <- splitLine[0] EQUALS TRUE
+        IF validateBeneficiaryNum <- splitLine[2] EQUALS TRUE
+          IF validateStage <- splitLine[6] EQUALS TRUE
+            IF validateLatitude <- splitLine[7] EQUALS TRUE
+              IF validateLongitude <- splitLine[8] EQUALS TRUE
+                isValid = TRUE
+  END validateLine
+  
+  METHOD: validateProvince
+  IMPORT: token(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: isValid is true when token is valid province
+  ALGORITHM:
+    provArr = {"Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland And Labrador", "Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Northwest Territories", "Nunavut", "Yukon"}
+    provNum = LENGTH OF provArr
+    isValid = FALSE
+
+    FOR i = 0 TO provNum CHANGEBY 1
+      IF token EQUALS provArr[i]
+        isValid = TRUE
+      END IF
+    END FOR
+  END validateProvince
+
+  METHOD: validateBeneficiaryNum
+  IMPORT: token(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: isValid is true when token is valid beneficiaryNum
+  ALGORITHM:
+    isValid = FALSE
+    TRY
+      parsedInt = Integer.parseInt <- token
+      IF (parsedInt >= 1) AND (parsedInt <= 9999)
+        isValid = TRUE
+      END IF
+    END TRY
+    CATCH NUMBERFORMATEXCEPTION
+      OUTPUT "ERROR: beneficiaryNum has to be an integer."
+    END CATCH
+  END validateBeneficiaryNum
+
+  METHOD: validateStage
+  IMPORT: token(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: isValid is true when token is valid stage
+  ALGORITHM:
+    stageArr = {"Completed", "Ongoing"}
+    stageNum = LENGTH OF stageArr
+    isValid = FALSE
+    FOR int = 0 TO stageNum CHANGEBY 1
+      IF token EQUALS stageArr[i]
+        isValid = TRUE
+      END IF
+    END FOR
+  END validateStage  
+  
+  METHOD: validateLatitude
+  IMPORT: token(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: isValid is true when token is valid latitude
+  ALGORITHM:
+    isValid = FALSE
+    TRY
+      parsedDouble = Double.parseDouble <- token
+      IF (parsedDouble >= 42.0) && (parsedDouble <= 83.0)
+        isValid = TRUE
+      END IF
+    END TRY
+    CATCH NUMBERFORMATEXCEPTION
+      OUTPUT "ERROR: latitude has to be a rational number."
+    END CATCH
+  END validateLatitude  
+  
+  METHOD: validateLongitude
+  IMPORT: token(String)
+  EXPORT: isValid(boolean)
+  ASSERTION: isValid is true when token is valid longitude
+  ALGORITHM:
+    isValid = FALSE
+    TRY
+      parsedDouble = Double.parseDouble <- token
+      IF (parsedDouble >= -141.0) && (parsedDouble <= -53.0)
+        isValid = TRUE
+      END IF
+    END TRY
+    CATCH NUMBERFORMATEXCEPTION
+      OUTPUT "ERROR: longitude has to be a rational number."
+    END CATCH
+  END validateLongitude
+  
+  METHOD: validateIntInput
+  IMPORT: prompt(String), min(int), max(int)
+  EXPORT: value(int)
+  ASSERTION: min <= value <= max and value is integer 
+  ALGORITHM:
+    value = min - 1
+    DO
+      TRY
+        OUTPUT prompt
+        value <- ASK USER WITH PROMPT
+        IF (value < min) OR (value > max)
+         THROW NEW ILLEGALARGUMENTEXCEPTION "ERROR: select a number between " + min + " and " + max + "."
+        END IF
+      END TRY
+      CATCH ILLEGALARGUMENTEXCEPTION
+        OUTPUT e.getMessage <- none
+      CATCH INPUTMISMATCHEXCEPTION
+        OUTPUT "ERROR: enter a whole number only."
+      END CATCH
+    WHILE (value < min) OR (value > max)
+    Assertion: min <= value <= max
+  END validateIntInput
+  
+END Canada

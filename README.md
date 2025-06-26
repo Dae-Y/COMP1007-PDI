@@ -43,7 +43,7 @@ The main menu <br>
 <br>
 Statistics for 10. Quebec <br><br><br>
 
-Thanks for reading!! :smiley::heart:
+Built with clean object-oriented design and structured for educational use.
 
 
 
